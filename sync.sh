@@ -41,7 +41,7 @@ do
 done
 
 # Loop over users and copy new cPanel CPMOVE files and restore them
-for i in $users; do
+for i in $HA_USERS; do
   if ssh root@$DST_HOST -p $DST_PORT '[ -d /home/$i ]'
     then
     echo "User does not exists, transferring cPanel"

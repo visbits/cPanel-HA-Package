@@ -20,5 +20,5 @@ Currently no database replication is supported.  The initial copy of the cPanel 
 
 ```
 # cpsync 5 minute cron
-*/5 * * * /usr/local/beyondhosting/cpsync/sync.sh
+*/5 * * * /usr/local/beyondhosting/cpsync/sync.sh > /dev/null 2>&1
 ```

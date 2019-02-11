@@ -3,8 +3,10 @@ Simply deploy this script on the primary host that will act as the master and co
 
 You will need to configure passwordless ssh key authentication for the master to login to the slave.
 
+Depending on your SSH port, you may way to configure ~/.ssh/config with the host port information for lsyncd.
+
 # Requirements:
-yum install lsyncd -y
+> yum install lsyncd -y
 
 # Database:
 Currently no database replication is supported.  The initial copy of the cPanel account will include databases and if you wish to support replication you will need to modify the pkgacct to not include database.

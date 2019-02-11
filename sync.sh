@@ -1,3 +1,4 @@
+# !/bin/bash
 # MIT License
 
 # Copyright (c) 2019 Beyond Hosting LLC
@@ -42,9 +43,9 @@ done
 
 # Loop over users and copy new cPanel CPMOVE files and restore them
 for i in $HA_USERS; do
-  if ssh root@$DST_HOST -p $DST_PORT '[ -d /home/$i ]'
+  if ssh root@$DST_HOST -p $DST_PORT '[ ! -d /home/$i ]'
     then
-    echo "User does not exists, transferring cPanel"
+    echo "User '$i' does not exists, transferring cPanel"
     /scripts/pkgacct $i
     scp -P $DST_PORT /home/cpmove-$i.tar.gz root@$DST_HOST:/home
     ssh root@$DST_HOST -p $DST_PORT "/scripts/restorepkg --force /home/cpmove-$i.tar.gz; rm -f /home/cpmove-$i.tar.gz"

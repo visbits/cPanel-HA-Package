@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 #Configurables
-DST_HOST='209.87.151.176'
+DST_HOST='0.0.0.0'
 DST_PORT='2202'
 
 #Not implemented yet.

@@ -5,8 +5,20 @@ You will need to configure passwordless ssh key authentication for the master to
 
 Depending on your SSH port, you may way to configure ~/.ssh/config with the host port information for lsyncd.
 
-# Requirements:
-> yum install lsyncd -y
+# Install Requirements:
+```
+yum install lsyncd -y
+systemctl enable lsyncd
+```
+
 
 # Database:
 Currently no database replication is supported.  The initial copy of the cPanel account will include databases and if you wish to support replication you will need to modify the pkgacct to not include database.
+
+# Cron:
+> /etc/cron.d/cpsync
+
+```
+# cpsync 5 minute cron
+*/5 * * * /usr/local/beyondhosting/cpsync/sync.sh
+```

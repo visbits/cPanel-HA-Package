@@ -30,34 +30,36 @@ REMOTE_USER='root'
 
 #Clear Vars
 unset HA_USERS
-
+echo "# LSYNCD configuration managed by /usr/local/beyondhosting/cpsync" > /etc/lsyncd.conf
 # Grab cPanel accounts with a package that begins with 'HASYNC_'
 for i in `ls /var/cpanel/users/*`;
 do
-	if grep -Fiq  "HASYNC_" $i;
-	then 
-		# Successfully identified this account requiring HASYNC.
-		HA_USERS=$HA_USERS$(basename $i);
-	fi
+        if grep -Fiq  "HASYNC_" $i;
+        then
+                # Successfully identified this account requiring HASYNC.
+#               HA_USERS="\n"$HA_USERS$(basename $i);
+                HA_USERS=("${HA_USERS[@]}" $(basename $i))
+        fi
 done
 
 # Loop over users and copy new cPanel CPMOVE files and restore them
-for i in $HA_USERS; do
-  if ssh root@$DST_HOST -p $DST_PORT '[ ! -d /home/$i ]'
+for i in "${HA_USERS[@]}"; do
+  if ssh root@$DST_HOST -p $DST_PORT '[ ! -f  /var/cpanel/users/$i ]'
     then
     echo "User '$i' does not exists, transferring cPanel"
     /scripts/pkgacct $i
     scp -P $DST_PORT /home/cpmove-$i.tar.gz root@$DST_HOST:/home
     ssh root@$DST_HOST -p $DST_PORT "/scripts/restorepkg --force /home/cpmove-$i.tar.gz; rm -f /home/cpmove-$i.tar.gz"
     rm /home/cpmove-$i.tar.gz -f
+  else
+    echo "User cPanel already exists";
   fi
+  # Update lsyncd
+  echo "Adding User to LSYNCD:" $i
+  echo "sync{default.rsyncssh, source=\"/home/$i\", host=\"$DST_HOST\", targetdir=\"/home/$i\"}" >> /etc/lsyncd.conf
 done;
 
 # Update lsyncd
-echo "" > /etc/lsyncd.conf
-for i in $HA_USERS; do
-  echo "sync{default.rsyncssh, source=\"/home/$i\", host=\"$DST_HOST\", targetdir=\"/home/$i\"}" >> /etc/lsyncd.conf
-done;
 
 # Restart lsyncd
 systemctl restart lsyncd
